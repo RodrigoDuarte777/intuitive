@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intuitive Care</title>
+    <link rel="icon" type="image/png" href="LogoEscura.png" />  
+    <link rel="stylesheet" href="estilo.css">
+    <script src="https://unpkg.com/vue@2"></script>
+</head>
+<body>
+    <script type="text/x-template" id="grid-template">
+        <table>
+          <thead>
+            <tr>
+              <th v-for="key in columns"
+                @click="sortBy(key)"
+                :class="{ active: sortKey == key }">
+                {{ key | capitalize }}
+                <span class="arrow" :class="sortOrders[key] > 0 ? 'asc' : 'dsc'">
+                </span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="entry in filteredHeroes">
+              <td v-for="key in columns">
+                {{entry[key]}}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </script>
+      
+   <div class="content" id="principal" style=" text-align: center;">
+   <img src="logobranca.png" id="logo">
+</div>  
+</div>
+  
+ 
+      <div id="demo" style="font-family: Arial, Helvetica, sans-serif;">
+        
+        <form id="search" >
+        
+          <div id="pesq">
+            <input name="query" v-model="searchQuery" id="pesquisa" placeholder="digite aqui..." style="text-align: right;"/>
+          </div>
+        </form>
+       
+        <br>
+       <p style="position: absolute;"> Relação de Operadoras ativas ANS</p>
+        <br>
+        <br>
+        <br>
+        <div id="tabela">
+        <demo-grid
+          :heroes="gridData"
+          :columns="gridColumns"
+          :filter-key="searchQuery"
+        >
+        </demo-grid>
+      </div>
+      </div>
+  
+      <script>
+    
+        Vue.component("demo-grid", {
+          template: "#grid-template",
+          props: {
+            heroes: Array,
+            columns: Array,
+            filterKey: String
+          },
+          data: function() {
+            var sortOrders = {};
+            this.columns.forEach(function(key) {
+              sortOrders[key] = 1;
+            });
+            return {
+              sortKey: "",
+              sortOrders: sortOrders
+            };
+          },
+          computed: {
+            filteredHeroes: function() {
+              var sortKey = this.sortKey;
+              var filterKey = this.filterKey && this.filterKey.toLowerCase();
+              var order = this.sortOrders[sortKey] || 1;
+              var heroes = this.heroes;
+              if (filterKey) {
+                heroes = heroes.filter(function(row) {
+                  return Object.keys(row).some(function(key) {
+                    return (
+                      String(row[key])
+                        .toLowerCase()
+                        .indexOf(filterKey) > -1
+                    );
+                  });
+                });
+              }
+              if (sortKey) {
+                heroes = heroes.slice().sort(function(a, b) {
+                  a = a[sortKey];
+                  b = b[sortKey];
+                  return (a === b ? 0 : a > b ? 1 : -1) * order;
+                });
+              }
+              return heroes;
+            }
+          },
+          filters: {
+            capitalize: function(str) {
+              return str.charAt(0).toUpperCase() + str.slice(1);
+          }
+          },
+          methods: {
+          sortBy: function(key) {
+          this.sortKey = key;
+          this.sortOrders[key] = this.sortOrders[key] * -1;
+           }
+           }
+           });
+  
+       
+            var demo = new Vue({
+            el: "#demo",
+            data: {
+            searchQuery: "",
+            gridColumns: ["Registro ANS","CNPJ","Razão Social","Nome Fantasia","Modalidade","Logradouro",
+            "Número","Complemento","Bairro","Cidade","UF","CEP","DDD","Telefone",
+            "Fax","Endereço eletrônico","Representante","Cargo Representante","Data Registro ANS"],
+            gridData: [
+              { 'Registro ANS': "418374", 'CNPJ':"11828089000103",
+            'Razão Social':"CAIXA DE ASSISTENCIA DO SETOR DE ENERGIA -EVIDA -ASSISTÊNCIA À SAÚDE",
+            'Nome Fantasia':"E-VIDA",'Modalidade':"Autogestão",
+            'Logradouro':"SETOR DE HABITAÇÕES COLETIVAS GEMINADAS",
+            'Número':"QUADRA 704/705",'Complemento':"BLOCO C, LOJA 48",'Bairro':"ASA NORTE",
+            'Cidade':"Brasília",'UF':"DF",'CEP':"70730630",'DDD':61,'Telefone':39668300,
+            'Fax':39668302,'Endereço eletrônico':"governanca@evida.org.br",
+            'Representante':"ELI PINTO DE MELO JUNIOR",
+            'Cargo Representante':"PRESIDENTE",'Data Registro ANS':"12/01/2012"},
+             
+            { 'Registro ANS': "417734", 'CNPJ':"7525246000126",
+            'Razão Social':"ABBESS - ASSOCIAÇÃO BRASILEIRA DE BENEFICIOS E SEGURIDADE SOCIAL",
+            'Nome Fantasia':"ABBESS",'Modalidade':"Administradora de Benefícios",
+            'Logradouro':"AV RIO BRANCO",
+            'Número':"120",'Complemento':"PAVIMENTO 4 - SALA 426",'Bairro':"CENTRO",
+            'Cidade':"Rio de Janeiro",'UF':"RJ",'CEP':"20040001",'DDD':21,'Telefone':22704971,
+            'Fax':"não possui",'Endereço eletrônico':"comercial@abbess.com.br",
+            'Representante':"ELI PINTO DE MELO JUNIOR",
+            'Cargo Representante':"PRESIDENTE",'Data Registro ANS':"20/12/2010"},
+
+            { 'Registro ANS': "314668", 'CNPJ':"17505793000101",
+            'Razão Social':"ABERTTA SAÚDE - ASSOCIAÇÃO BENEFICENTE DOS EMPREGADOS DA ARCELORMITTAL NO BRASIL",
+            'Nome Fantasia':"ABBESS",'Modalidade':"Autogestão",
+            'Logradouro':"AV. BERNARDO MONTEIRO",
+            'Número':"831",'Complemento':"Subsolo, 2º andar e 3º andar",'Bairro':"SANTA EFIGÊNIA",
+            'Cidade':"Belo Horizonte",'UF':"MG",'CEP':"30150281",'DDD':31,'Telefone':32484300,
+            'Fax':"32484377",'Endereço eletrônico':"abertta.ans@arcelormittal.com.br",
+            'Representante':"JOSÉ ANTÔNIO GIMENEZ",
+            'Cargo Representante':"PRESIDENTE",'Data Registro ANS':"28/12/1998"},
+            
+            { 'Registro ANS': "419621", 'CNPJ':"17687511000126",
+            'Razão Social':"ABPLUS ADMINISTRADORA DE BENEFÍCIOS LTDA",
+            'Nome Fantasia':"ABPLUS ",'Modalidade':"Administradora de Benefícios",
+            'Logradouro':"AVENIDA JOSÉ DA SILVA NETO",
+            'Número':"200",'Complemento':"BLOCO 4, SALA 403",'Bairro':"BARRA DA TIJUCA",
+            'Cidade':"RIO DE JANEIRO",'UF':"RJ",'CEP':"22775056",'DDD':"",'Telefone':"",
+            'Fax':"",'Endereço eletrônico':"contato@abplus.com.br",
+            'Representante':"JOSÉ ANTÔNIO GIMENEZ",
+            'Cargo Representante':"ADMINISTRADOR",'Data Registro ANS':"13/11/2014"},
+
+            { 'Registro ANS': "418901", 'CNPJ':"10458298000131",
+            'Razão Social':"AD SALUTE ADMINISTRADORA DE BENEFÍCIOS EIRELI",
+            'Nome Fantasia':"AD SALUTE",'Modalidade':"Administradora de Benefícios",
+            'Logradouro':"RUA BUENOS AIRES",
+            'Número':"68",'Complemento':"SALA 2901",'Bairro':"CENTRO",
+            'Cidade':"RIO DE JANEIRO",'UF':"RJ",'CEP':"20070020",'DDD':"21",'Telefone':"35531692",
+            'Fax':"",'Endereço eletrônico':"LEONARDO@UNIMEDICASAUDE.COM",
+            'Representante':"JOÃO CARMO DA SILVEIRA",
+            'Cargo Representante':"ADMINISTRADOR",'Data Registro ANS':"13/06/2013"},
+
+            { 'Registro ANS': "420671", 'CNPJ':"26134881000127",
+            'Razão Social':"ADDERE ADMINISTRADORA DE BENEFÍCIOS EIRELI",
+            'Nome Fantasia':"ADDERE ADMINISTRADORA DE BENEFÍCIOS",'Modalidade':"Administradora de Benefícios",
+            'Logradouro':"AV. DAS ARAUCÁRIAS",
+            'Número':"LOTE 1835",'Complemento':"1905, 1955 E 2005, 4º PISO, SL 444/445",'Bairro':"SUL (ÁGUAS CLARAS) ",
+            'Cidade':"Brasília",'UF':"DF",'CEP':"71936250",'DDD':"61",'Telefone':"982537447",
+            'Fax':"",'Endereço eletrônico':"contato@addereadm.com",
+            'Representante':"JULIANA DOS SANTOS GONTIJO",
+            'Cargo Representante':"Sócia Administradora",'Data Registro ANS':"13/12/2016"},
+
+            { 'Registro ANS': "417556", 'CNPJ':"10458298000131",
+            'Razão Social':"ADM ADMINISTRADORA DE BENEFÍCIOS LTDA",
+            'Nome Fantasia':"ADM ADMINISTRADORA",'Modalidade':"Administradora de Benefícios",
+            'Logradouro':"RUA DOUTOR RUBENS GOMES BUENO",
+            'Número':"691",'Complemento':"17 ANDAR - PARTE",'Bairro':"VARZEA DE BAIXO",
+            'Cidade':"São Paulo",'UF':"SP",'CEP':"4730903",'DDD':"11",'Telefone':"47005033",
+            'Fax':"34911102",'Endereço eletrônico':"br.juridico@aon.com.br",
+            'Representante':"LEONARDO CARNEIRO MARTINS COELHO",
+            'Cargo Representante':"DIRETOR ADJUNTO COMERCIAL",'Data Registro ANS':"21/09/2010"},
+
+            { 'Registro ANS': "421553", 'CNPJ':"28315826000169",
+            'Razão Social':"ADM LIFE - ADMINISTRADORA DE BENEFÍCIOS LTDA.",
+            'Nome Fantasia':"ADM LIFE",'Modalidade':"Administradora de Benefícios",
+            'Logradouro':"AVENIDA PEDROSO DE MORAIS",
+            'Número':"272",'Complemento':"CJ 96",'Bairro':"PINHEIROS",
+            'Cidade':"SÃO PAULO",'UF':"SP",'CEP':"5420000",'DDD':"11",'Telefone':"34769350",
+            'Fax':"",'Endereço eletrônico':"cristiane@admlife.com.br",
+            'Representante':"NELITO JÚNIOR DE ALMEIDA SILVA",
+            'Cargo Representante':"Sócio Administrador",'Data Registro ANS':"09/01/2019"},
+
+            { 'Registro ANS': "416932", 'CNPJ':"27867825000157",
+            'Razão Social':"ADMSERV BENEFÍCIOS E SERVIÇOS LTDA",
+            'Nome Fantasia':"GÉIA ADMINISTRADORA DE BENEFICIOS",'Modalidade':"Administradora de Benefícios",
+            'Logradouro':"RUA TRAIPU",
+            'Número':"125",'Complemento':"",'Bairro':"PACAEMBU",
+            'Cidade':"SÃO PAULO",'UF':"SP",'CEP':"1235000",'DDD':"11",'Telefone':"26917601",
+            'Fax':"38281888",'Endereço eletrônico':"fabio.oliveira@geia.com.br",
+            'Representante':"PEDRO OLIVEIRA OBLIZINER",
+            'Cargo Representante':"Sócio Administrador",'Data Registro ANS':"30/03/2009"},
+
+            { 'Registro ANS': "419168", 'CNPJ':"17273560000112",
+            'Razão Social':"ADPART M2 ADMINISTRAÇÃO E PARTICIPAÇÕES LTDA",
+            'Nome Fantasia':"ADPART M2",'Modalidade':"Medicina de Grupo",
+            'Logradouro':"RUA DONA ANITA MAYER",
+            'Número':"139",'Complemento':"",'Bairro':"BOTAFOGO",
+            'Cidade':"Campinas",'UF':"SP",'CEP':"13020350",'DDD':"19",'Telefone':"21029700",
+            'Fax':"",'Endereço eletrônico':"coopus@coopus.com.br",
+            'Representante':"GUSTAVO POLLI ANTONIO",
+            'Cargo Representante':"REPRESENTANTE LEGAL",'Data Registro ANS':"22/10/2013"},
+
+            { 'Registro ANS': "422347", 'CNPJ':"37201454000130",
+            'Razão Social':"ADRESS ADMINISTRADORA DE BENEFICIOS LTDA",
+            'Nome Fantasia':"ADRESS",'Modalidade':"Administradora de Benefícios",
+            'Logradouro':"AVENIDA RIO BRANCO",
+            'Número':"125",'Complemento':"15º ANDAR  SALA 1501",'Bairro':"CENTRO",
+            'Cidade':"Rio de Janeiro",'UF':"RJ",'CEP':"20040006",'DDD':"21",'Telefone':"22524066",
+            'Fax':"",'Endereço eletrônico':"contato@adress.com.br",
+            'Representante':"LAIR ISABEL BOHRER DIEDAM",
+            'Cargo Representante':"SÓCIA ADMINISTRADORA",'Data Registro ANS':"03/09/2020"},
+
+            { 'Registro ANS': "335657", 'CNPJ':"2041808000142",
+            'Razão Social':"ADVANCE PLANOS DE SAÚDE LTDA",
+            'Nome Fantasia':"ADVANCE",'Modalidade':"Medicina de Grupo",
+            'Logradouro':"RUA DR. SODRÉ",
+            'Número':"119",'Complemento':"",'Bairro':"VILA NOVA CONCEIÇÃO",
+            'Cidade':"São Paulo",'UF':"SP",'CEP':"4535110",'DDD':"",'Telefone':"",
+            'Fax':"",'Endereço eletrônico':"planosdesaude@advanceplanos.com.br",
+            'Representante':"JOSÉ JAIR JAMES DE ARRUDA PINTO",
+            'Cargo Representante':"ADMINISTRADOR",'Data Registro ANS':"28/12/1998"},
+
+            { 'Registro ANS': "413283", 'CNPJ':"3694367000140",
+            'Razão Social':"AESP ODONTO ASSISTÊNCIA ODONTOLÓGICA S/S LTDA EPP",
+            'Nome Fantasia':"AESP ODONTO",'Modalidade':"Odontologia de Grupo",
+            'Logradouro':"ALAMEDA GRAJAÚ",
+            'Número':"60",'Complemento':"SALA 2814",'Bairro':"ALPHAVILLE INDUSTRIAL",
+            'Cidade':"Barueri",'UF':"SP",'CEP':"6454050",'DDD':"1",'Telefone':"168135656",
+            'Fax':"168135656",'Endereço eletrônico':"aespodonto@aespodonto.com.br",
+            'Representante':"CARLOS EUGENIO PORTO BRAGA",
+            'Cargo Representante':"ADMINISTRADOR",'Data Registro ANS':"07/03/2001"},
+
+            { 'Registro ANS': "419907", 'CNPJ':"22891640000171",
+            'Razão Social':"AFFIANCE LIFE ADMINISTRADORA DE BENEFÍCIOS EM SAÚDE LTDA",
+            'Nome Fantasia':"AFFIANCE LIFE BENEFÍCIOS",'Modalidade':"Administradora de Benefícios",
+            'Logradouro':"AVENIDA FONSO PENA",
+            'Número':"867",'Complemento':"23º ANDAR - SALAS 2301 A  2305",'Bairro':"CENTRO",
+            'Cidade':"Belo Horizonte",'UF':"MG",'CEP':"30130905",'DDD':"31",'Telefone':"25335500",
+            'Fax':"",'Endereço eletrônico':"atendimento@affiancelife.com.br",
+            'Representante':"DAVISON KENER GONÇALVES",
+            'Cargo Representante':"ADMINISTRADOR",'Data Registro ANS':"23/09/2015"},
+
+            { 'Registro ANS': "417424", 'CNPJ':"11158465000191",
+            'Razão Social':"AFFIX ADMINISTRADORA DE BENEFÍCIOS LTDA",
+            'Nome Fantasia':"AFFIX BENEFÍCIOS",'Modalidade':"Administradora de Benefícios",
+            'Logradouro':"RUA DR. BRÁULIO GOMES",
+            'Número':"36",'Complemento':"18° ANDAR- SALA  ADMINISTRADORA",'Bairro':"REPÚBLICA",
+            'Cidade':"São Paulo",'UF':"SP",'CEP':"1047020",'DDD':"11",'Telefone':"39952217",
+            'Fax':"",'Endereço eletrônico':"pedro.rezende@affixbeneficios.com.br",
+            'Representante':"PEDRO AUGUSTO BARQUETE DE REZENDE",
+            'Cargo Representante':"SÓCIO ADMINISTRADOR",'Data Registro ANS':"16/07/2010"},
+
+            { 'Registro ANS': "368920", 'CNPJ':"20320487000105",
+            'Razão Social':"AGROS - INSTITUTO UFV DE SEGURIDADE SOCIAL",
+            'Nome Fantasia':"AGROS",'Modalidade':"Autogestão",
+            'Logradouro':"AVENIDA PURDUE",
+            'Número':"S/N",'Complemento':"",'Bairro':"CAMPUS DA UFV",
+            'Cidade':"Viçosa",'UF':"MG",'CEP':"36570900",'DDD':"31",'Telefone':"38996550",
+            'Fax':"38996550",'Endereço eletrônico':"dge@agros.org.br",
+            'Representante':"CLAUDIO FURTADO SOARES",
+            'Cargo Representante':"DIRETOR GERAL",'Data Registro ANS':"18/12/1998"},
+
+            { 'Registro ANS': "417742", 'CNPJ':"10387254000168",
+            'Razão Social':"ALACORÔ CASF ASSOCIAÇÃO CLUBE DE BENEFICIOS PESSOAIS E EMPRESARIAIS",
+            'Nome Fantasia':"ALACORÔ CASF",'Modalidade':"Administradora de Benefícios",
+            'Logradouro':"AVENIDA RIO BRANCO",
+            'Número':"131",'Complemento':"10ª ANDAR - PARTE",'Bairro':"CENTRO",
+            'Cidade':"Rio de Janeiro",'UF':"RJ",'CEP':"21040006",'DDD':"21",'Telefone':"25054500",
+            'Fax':"",'Endereço eletrônico':"RODRIGO.PEIXOTO@ALACORO.COM.BR",
+            'Representante':"ANADIA BIENHACHEWSKI FERREIRA ALVES",
+            'Cargo Representante':"DIRETORA PRESIDENTE",'Data Registro ANS':"20/12/2010"},
+
+            { 'Registro ANS': "416975", 'CNPJ':"6258813000162",
+            'Razão Social':"ALCANCE SAÚDE EIRELI",
+            'Nome Fantasia':"ALCANCE SAÚDE",'Modalidade':"Medicina de Grupo",
+            'Logradouro':"RUA CUSSY DE ALMEIDA JUNIOR",
+            'Número':"1931",'Complemento':"",'Bairro':"SAO JOAO",
+            'Cidade':"Araçatuba",'UF':"SP",'CEP':"16025050",'DDD':"18",'Telefone':"31176391",
+            'Fax':"",'Endereço eletrônico':"drevaldo@terra.com.br",
+            'Representante':"EVALDO DE ARAUJO SANCHEZ",
+            'Cargo Representante':"REPRESENTANTE",'Data Registro ANS':"03/07/2009"},
+
+            { 'Registro ANS': "421928", 'CNPJ':"34266553000102",
+            'Razão Social':"ALICE OPERADORA LTDA.",
+            'Nome Fantasia':"ALICE",'Modalidade':"Medicina de Grupo",
+            'Logradouro':"Rua Lisboa",
+            'Número':"224",'Complemento':"",'Bairro':"Cerqueira César",
+            'Cidade':"SÃO PAULO",'UF':"SP",'CEP':"16025050",'DDD':"11",'Telefone':"41186896",
+            'Fax':"",'Endereço eletrônico':"regulatorio@alice.com.br",
+            'Representante':"MATHEUS HERMSDORFF MORAES",
+            'Cargo Representante':"Diretor",'Data Registro ANS':"01/11/2019"},
+
+            { 'Registro ANS': "417289", 'CNPJ':"7674593000110",
+            'Razão Social':"ALL CARE ADMINISTRADORA DE BENEFÍCIOS SÃO PAULO LTDA",
+            'Nome Fantasia':"ALL CARE",'Modalidade':"Administradora de Benefícios",
+            'Logradouro':"ALAMEDA SANTOS",
+            'Número':"1357",'Complemento':"2º e 7º ANDAR",'Bairro':"JARDIM PAULISTA",
+            'Cidade':"SÃO PAULO",'UF':"SP",'CEP':"1419908",'DDD':"11",'Telefone':"32556444",
+            'Fax':"",'Endereço eletrônico':"ans@allcare.com.br",
+            'Representante':"FARIAS PEREIRA DE SOUZA",
+            'Cargo Representante':"DIRETOR PRESIDENTE",'Data Registro ANS':"14/05/2010"},
+
+            { 'Registro ANS': "417459", 'CNPJ':"11165556000154",
+            'Razão Social':"ALLCARE ADMINISTRADORA DE BENEFÍCIOS EM SAÚDE LTDA.",
+            'Nome Fantasia':"ALLCARE ADMINISTRADORA DE BENEFÍCIOS EM SAÚDE",
+            'Modalidade':"Administradora de Benefícios",
+            'Logradouro':"SCS QD. 03 BLOCO A",
+            'Número':"LOTE",'Complemento':"107/111",'Bairro':"ASA SUL",
+            'Cidade':"Brasília",'UF':"DF",'CEP':"70303907",'DDD':"61",'Telefone':"30443600",
+            'Fax':"30443615",'Endereço eletrônico':"ans@allcare.com.br",
+            'Representante':"FARIAS PEREIRA DE SOUSA",
+            'Cargo Representante':"DIRETOR PRESIDENTE",'Data Registro ANS':"14/07/2010"},
+
+            { 'Registro ANS': "422177", 'CNPJ':"35933395000160",
+            'Razão Social':"ALLDEN ASSISTÊNCIA ODONTOLÓGICA LTDA",
+            'Nome Fantasia':"ALLDEN SAÚDE",'Modalidade':"Odontologia de Grupo",
+            'Logradouro':" RUA 09 NORTE LOTE 05 E RUA DAS PITANGUE",
+            'Número':"LOTE 6",'Complemento':"LOJAS 11/12 PARTE 55  EDIFÍCIO EASY ",'Bairro':"AGUAS CLARAS",
+            'Cidade':"Brasília",'UF':"DF",'CEP':"71908540",'DDD':"61",'Telefone':"37729707",
+            'Fax':"",'Endereço eletrônico':"geander.santos@alldensaude.com.br",
+            'Representante':"SERGIO ROMERO SILVA",
+            'Cargo Representante':"REPRESENTANTE LEGAL",'Data Registro ANS':"12/03/2020"},
+
+            { 'Registro ANS': "515", 'CNPJ':"4439627000102",
+            'Razão Social':"ALLIANZ SAÚDE S/A",
+            'Nome Fantasia':"ALLIANZ",'Modalidade':"Seguradora Especializada em Saúde",
+            'Logradouro':" RUA EUGÊNIO DE MEDEIROS",
+            'Número':"303",'Complemento':"7º ANDAR - PARTE",'Bairro':"PINHEIROS",
+            'Cidade':"SÃO PAULO",'UF':"SP",'CEP':"5425000",'DDD':"11",'Telefone':"40015060",
+            'Fax':"",'Endereço eletrônico':"compliance@allianz.com.br",
+            'Representante':"MATTHIAS KÜHN",
+            'Cargo Representante':"DIRETOR",'Data Registro ANS':"06/08/2001"},
+
+            { 'Registro ANS': "417807", 'CNPJ':"12584316000157",
+            'Razão Social':"ALPER ADMINISTRADORA DE BENEFICIOS LTDA",
+            'Nome Fantasia':"ALPER ADMINISTRADORA DE BENEFICIOS LTDA",
+            'Modalidade':"Administradora de Benefícios",
+            'Logradouro':"RUA GILBERTO SABINO",
+            'Número':"215",'Complemento':"13º ANDAR",'Bairro':"PINHEIROS",
+            'Cidade':"SÃO PAULO",'UF':"SP",'CEP':"5425020",'DDD':"11",'Telefone':"31752900",
+            'Fax':"",'Endereço eletrônico':"controladoria@brinsurance.com.br",
+            'Representante':"LUCAS MORENO NEVES",
+            'Cargo Representante':"DIRETOR FINANCEIRO",'Data Registro ANS':"24/01/2011"},
+
+            { 'Registro ANS': "419982", 'CNPJ':"20459346000160",
+            'Razão Social':"ALPHA DENTAL PLANO DE SAUDE LTDA ME",
+            'Nome Fantasia':"DENTALMED",
+            'Modalidade':"Odontologia de Grupo",
+            'Logradouro':"AVENIDA DAS SIBIPIRUNAS",
+            'Número':"2656",'Complemento':"1º ANDAR, SALA 03",'Bairro':"SETOR COMERCIAL SUL",
+            'Cidade':"Sinop",'UF':"MT",'CEP':"78550029",'DDD':"66",'Telefone':"35310070",
+            'Fax':"",'Endereço eletrônico':"",
+            'Representante':"IVAN DALL' STELLA COSTA JÚNIOR",
+            'Cargo Representante':"SÓCIO GERENTE",'Data Registro ANS':"09/12/2015"},
+
+            { 'Registro ANS': "422754", 'CNPJ':"40246859000108",
+            'Razão Social':"ALPHA SERVIÇOS DE SAÚDE LTDA",
+            'Nome Fantasia':"ALPHA SAÚDE",
+            'Modalidade':"Medicina de Grupo",
+            'Logradouro':"Rua Ramon Penharrubia",
+            'Número':"130",'Complemento':"Conj 403",'Bairro':"Bela Vista",
+            'Cidade':"SÃO PAULO",'UF':"SP",'CEP':"1323140",'DDD':"",'Telefone':"",
+            'Fax':"",'Endereço eletrônico':"adm@alphassaude.com.br",
+            'Representante':"ADEMAR VALENTIM DA SILVA",
+            'Cargo Representante':"Representante junto a ANS",'Data Registro ANS':"19/05/2021"},
+
+            { 'Registro ANS': "420255", 'CNPJ':"22103116000199",
+            'Razão Social':"ALTER ADMINISTRADORA DE BENEFICIOS LTDA - EPP",
+            'Nome Fantasia':"ALTER ADMINISTRADORA",
+            'Modalidade':"Administradora de Benefícios",
+            'Logradouro':"RUA CAPITÃO ADELMIO NORBERTO DA SILVA",
+            'Número':"395",'Complemento':"SALA 01",'Bairro':"ALTO DA BOA VISTA",
+            'Cidade':"Ribeirão Preto",'UF':"SP",'CEP':"14025670",'DDD':"16",'Telefone':"39779072",
+            'Fax':"",'Endereço eletrônico':"ALTERADM@UOL.COM.BR",
+            'Representante':"CARLOS JOSÉ FOIZER",
+            'Cargo Representante':"ADMINISTRADOR",'Data Registro ANS':"25/10/2016"},
+
+            { 'Registro ANS': "344800", 'CNPJ':"62511019000150",
+            'Razão Social':"ALVORECER - ASSOCIAÇÃO DE SOCORROS MÚTUOS",
+            'Nome Fantasia':"ALVORECER",
+            'Modalidade':"Medicina de Grupo",
+            'Logradouro':"RUA EZEQUIEL FREIRE",
+            'Número':"192",'Complemento':"13º ANDAR, SALA 1308",'Bairro':"SANTANA",
+            'Cidade':"SÃO PAULO",'UF':"SP",'CEP':"2034000",'DDD':"11",'Telefone':"30169409",
+            'Fax':"",'Endereço eletrônico':"edson.ramos@bluemedsaude.com.br",
+            'Representante':"SILVIO JOSÉ FERRAZ TAVARES",
+            'Cargo Representante':"PRESIDENTE",'Data Registro ANS':"15/01/1999"},
+
+            { 'Registro ANS': "421871", 'CNPJ':"3013779000178",
+            'Razão Social':"AMA - ASSOCIAÇÃO METROPOLITANA ASSISTENCIAL",
+            'Nome Fantasia':"AMA - ASSOCIAÇÃO METROPOLITANA ASSISTENCIAL",
+            'Modalidade':"Medicina de Grupo",
+            'Logradouro':"RODOVIA DO CAQUI",
+            'Número':"1150",'Complemento':"SALA PRÓXIMA AO PRONTO SOCORRO",'Bairro':"ARAÇATUBA",
+            'Cidade':"Campina Grande do Sul",'UF':"PR",'CEP':"83430000",'DDD':"41",'Telefone':"36792528",
+            'Fax':"",'Endereço eletrônico':"ama@hospitalcaron.org.br",
+            'Representante':"PEDRO HENRIQUE LAMBACH CARON",
+            'Cargo Representante':"PRESIDENTE",'Data Registro ANS':"29/07/2021"},
+
+            { 'Registro ANS': "419052", 'CNPJ':"16926969000128",
+            'Razão Social':"AMAZÔNIA PLANOS DE SAÚDE LTDA",
+            'Nome Fantasia':"APLANO AMAZÔNIA SAÚDE",
+            'Modalidade':"Medicina de Grupo",'Logradouro':"TRAVESSA NOVE DE JANEIRO",
+            'Número':"1295",'Complemento':"",'Bairro':"SÃO BRAZ",
+            'Cidade':"Belém",'UF':"PA",'CEP':"66060575",'DDD':"91",'Telefone':"31847650",
+            'Fax':"32495686",'Endereço eletrônico':"AMASAUDE@HOTMAIL.COM",
+            'Representante':"EDSON YUZUR YASOJIMA",
+            'Cargo Representante':"REPRESENTANTE LEGAL",'Data Registro ANS':"03/10/2013"},
+
+            { 'Registro ANS': "304531", 'CNPJ':"17143876000190",
+            'Razão Social':"AME-ASSISTÊNCIA MÉDICA A EMPRESAS LTDA",
+            'Nome Fantasia':"AME-SISTEMA DE SAÚDE 24 HORAS",
+            'Modalidade':"Medicina de Grupo",'Logradouro':"RUA SAMPAIO",
+            'Número':"376",'Complemento':"",'Bairro':"CENTRO",
+            'Cidade':"Juiz de Fora",'UF':"MG",'CEP':"36010360",'DDD':"32",'Telefone':"21015600",
+            'Fax':"32155201",'Endereço eletrônico':"amesaude24h@terra.com.br",
+            'Representante':"MARCIA MARIA DE SOUZA FELLET",
+            'Cargo Representante':"DIRETORA ADMINISTRATIVA E FINANCEIRA",'Data Registro ANS':"22/12/1998"},
+
+            { 'Registro ANS': "413330", 'CNPJ':"4257073000114",
+            'Razão Social':"AMEP FREGUESIA OPERADORA DE PLANO DE SAUDE LTDA",
+            'Nome Fantasia':"AMEP FREGUESIA OPERADORA DE PLANOS DE SAUDE LTDA",
+            'Modalidade':"Medicina de Grupo",'Logradouro':"RUA ARAGUAIA",
+            'Número':"13",'Complemento':"",'Bairro':"JACAREPAGUA",
+            'Cidade':"Rio de janeiro",'UF':"RJ",'CEP':"22745270",'DDD':"21",'Telefone':"22216390",
+            'Fax':"25091083",'Endereço eletrônico':"amep.operadora@uol.com.br",
+            'Representante':"ANA MARLI VIDEIRA PEIXOTO FAZZINI",
+            'Cargo Representante':"SOCIA GERENTE",'Data Registro ANS':"16/03/2001"},
+
+            { 'Registro ANS': "394734", 'CNPJ':"67839969000121",
+            'Razão Social':"AMEPLAN ASSISTÊNCIA MÉDICA PLANEJADA LTDA",
+            'Nome Fantasia':"AMEPLAN ASSITENCIA MÉDICA PLANEJADA  LTDA.",
+            'Modalidade':"Medicina de Grupo",'Logradouro':"RUA UBATU MIRIM",
+            'Número':"45",'Complemento':"3º ANDAR",'Bairro':"VILA GEA",
+            'Cidade':"São Paulo",'UF':"SP",'CEP':"4692010",'DDD':"11",'Telefone':"33219700",
+            'Fax':"",'Endereço eletrônico':"diretoria.financeira@ameplansaude.com.br",
+            'Representante':"ALI HUSSEIN  IBRAHIN TAHA",
+            'Cargo Representante':"SÓCIO DIRETOR",'Data Registro ANS':"24/12/1998"},
+ ]
+ }
+ });
+</script>
+
+   
+</div>
+</body>
+</html>
